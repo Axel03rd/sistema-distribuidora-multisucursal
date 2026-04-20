@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distribuidora El Istmo — Insumos de Oficina</title>
+  <link rel="stylesheet" href="Styles.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="Index.html" onclick="showPage('home')">
+      <img src="imagenes/Logo.png" alt="Logo El Istmo" onerror="this.style.display='none'" />
+      <span class="nav-logo-text">El Istmo</span>
+    </a>
+    <div class="nav-search">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="nav-search-input" placeholder="Buscar productos..." onkeydown="if(event.key==='Enter') doNavSearch()" />
+    </div>
+    <div class="nav-links">
+      <span id="user-greeting" class="user-greeting" style="display:none">Hola, <strong id="user-name-nav"></strong></span>
+      <button class="nav-btn" onclick="showPage('search')" id="nav-search-btn">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Buscar
+      </button>
+      <button class="nav-btn" onclick="showPage('auth')" id="nav-auth-btn">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="nav-auth-label">Ingresar</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('cart')" style="position:relative">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Carrito <span class="cart-count" id="cart-count">0</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('history')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Historial
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════ PAGE: HOME ═══════════════════ -->
+<div class="page active" id="page-home">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <h1>Todo lo que tu oficina necesita, en un solo lugar</h1>
+      <p>Papel, bolígrafos, tintas, archivadores y mucho más. Envío rápido a todo Panamá.</p>
+      <div class="hero-btns">
+        <button class="btn btn-white" onclick="showPage('search')">Ver catálogo</button>
+        <button class="btn btn-outline" onclick="showPage('auth')">Crear cuenta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="section">
+      <h2 class="section-title">Categorías</h2>
+      <p class="section-sub">Encuentra lo que buscas rápidamente</p>
+      <div class="cat-grid" id="home-cats">
+        <div style="color:var(--text-muted);padding:1rem">Cargando categorías…</div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <h2 class="section-title">Productos populares</h2>
+      <p class="section-sub">Los más comprados por nuestros clientes</p>
+      <div class="prod-grid" id="home-products">
+        <div style="color:var(--text-muted);padding:1rem">Cargando productos…</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ═══════════════════ PAGE: SEARCH ═══════════════════ -->
+<div class="page" id="page-search">
+  <div class="search-header">
+    <div class="container">
+      <h2>Catálogo de productos</h2>
+      <div class="search-bar-lg">
+        <input type="text" id="search-input" placeholder="Buscar productos..." onkeydown="if(event.key==='Enter') runSearch()" />
+        <button onclick="runSearch()">Buscar</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="search-layout">
+      <aside class="filters-panel">
+        <div class="filter-group">
+          <div class="filter-label">Categoría</div>
+          <div id="cat-filters"></div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Precio</div>
+          <label class="filter-option"><input type="checkbox" data-price="0-5"    onchange="runSearch()"> Hasta $5</label>
+          <label class="filter-option"><input type="checkbox" data-price="5-15"   onchange="runSearch()"> $5 — $15</label>
+          <label class="filter-option"><input type="checkbox" data-price="15-50"  onchange="runSearch()"> $15 — $50</label>
+          <label class="filter-option"><input type="checkbox" data-price="50-999" onchange="runSearch()"> Más de $50</label>
+        </div>
+      </aside>
+      <div>
+        <div class="search-results-header">
+          <span class="results-count" id="results-count">Mostrando todos los productos</span>
+          <select class="sort-select" id="sort-select" onchange="runSearch()">
+            <option value="default">Ordenar: Destacados</option>
+            <option value="price-asc">Precio: Menor a mayor</option>
+            <option value="price-desc">Precio: Mayor a menor</option>
+            <option value="name">Nombre A-Z</option>
+          </select>
+        </div>
+        <div class="prod-grid" id="search-results"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PAGE: AUTH ═══════════════════ -->
+<div class="page" id="page-auth">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);font-weight:600">El Istmo</div>
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.25rem">Suministros de oficina</div>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login"    onclick="switchAuth('login')">Iniciar sesión</div>
+        <div class="auth-tab"        id="tab-register" onclick="switchAuth('register')">Registrarse</div>
+      </div>
+
+      <!-- Login -->
+      <div class="auth-form active" id="form-login">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input class="form-input" type="email"    id="login-email" placeholder="correo@ejemplo.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" type="password" id="login-pass"  placeholder="••••••••" />
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:.75rem" onclick="doLogin()">Ingresar</button>
+        <div style="margin-top:1rem;text-align:center;font-size:0.85rem;color:var(--text-muted)">
+          ¿No tienes cuenta? <a href="#" onclick="switchAuth('register')" style="color:var(--blue)">Regístrate aquí</a>
+        </div>
+      </div>
+
+      <!-- Register — campos extendidos para ClienteNatural -->
+      <div class="auth-form" id="form-register">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="form-group">
+            <label class="form-label">Nombre <span style="color:var(--danger)">*</span></label>
+            <input class="form-input" type="text" id="reg-name"     placeholder="Nombre" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apellido <span style="color:var(--danger)">*</span></label>
+            <input class="form-input" type="text" id="reg-apellido" placeholder="Apellido" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cédula <span style="font-size:0.78rem;color:var(--text-muted)">(opcional)</span></label>
+          <input class="form-input" type="text" id="reg-cedula"   placeholder="8-123-4567" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico <span style="color:var(--danger)">*</span></label>
+          <input class="form-input" type="email" id="reg-email"   placeholder="correo@ejemplo.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono <span style="font-size:0.78rem;color:var(--text-muted)">(opcional)</span></label>
+          <input class="form-input" type="tel"  id="reg-telefono" placeholder="6000-0000" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña <span style="color:var(--danger)">*</span></label>
+          <input class="form-input" type="password" id="reg-pass"  placeholder="Mínimo 6 caracteres" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar contraseña <span style="color:var(--danger)">*</span></label>
+          <input class="form-input" type="password" id="reg-pass2" placeholder="Repite tu contraseña" />
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:.75rem" onclick="doRegister()">Crear cuenta</button>
+      </div>
+
+      <div id="auth-logged" style="display:none;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:1rem">✓</div>
+        <h3 style="margin-bottom:0.5rem" id="auth-welcome"></h3>
+        <p style="margin-bottom:1.5rem">Tu sesión está activa</p>
+        <button class="btn btn-secondary" style="margin-right:.5rem" onclick="showPage('home')">Ir al inicio</button>
+        <button class="btn" style="border:1px solid var(--border)" onclick="doLogout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PAGE: PRODUCT ═══════════════════ -->
+<div class="page" id="page-product">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="#" onclick="showPage('home')">Inicio</a>
+      <span>›</span>
+      <a href="#" onclick="showPage('search')" id="prod-bread-cat">Categoría</a>
+      <span>›</span>
+      <span id="prod-bread-name">Producto</span>
+    </div>
+    <div class="product-detail">
+      <div class="product-detail-grid">
+        <div class="product-image-box" id="prod-img"></div>
+        <div class="product-detail-info">
+          <div class="prod-cat" id="prod-cat"></div>
+          <h1 id="prod-name"></h1>
+          <div class="price-big" id="prod-price"></div>
+          <p id="prod-desc"></p>
+          <div class="qty-row">
+            <div class="qty-input">
+              <button class="qty-btn" onclick="changeQty(-1)">−</button>
+              <input class="qty-num" type="number" id="qty" value="1" min="1" max="99" readonly />
+              <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <button class="btn btn-primary" onclick="addCurrentToCart()" style="flex:1">
+              Agregar al carrito
+            </button>
+          </div>
+          <div class="product-meta" id="prod-meta"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PAGE: CART ═══════════════════ -->
+<div class="page" id="page-cart">
+  <div class="container">
+    <div style="padding:2rem 0 1rem"><h2>Mi Carrito</h2></div>
+    <div class="cart-layout">
+      <div><div id="cart-items-container"></div></div>
+      <div>
+        <div class="order-summary">
+          <h3>Resumen del pedido</h3>
+          <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">$0.00</span></div>
+          <div class="summary-row"><span>Envío</span><span>Gratis</span></div>
+          <div class="summary-row"><span>ITBMS (7%)</span><span id="cart-tax">$0.00</span></div>
+          <div class="summary-total"><span>Total</span><span id="cart-total">$0.00</span></div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1.25rem;padding:.75rem" onclick="doCheckout()">
+            Proceder al pago
+          </button>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:.5rem;padding:.65rem" onclick="showPage('search')">
+            Seguir comprando
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PAGE: HISTORY ═══════════════════ -->
+<div class="page" id="page-history">
+  <div class="container">
+    <div style="padding:2rem 0 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+      <h2>Historial de compras</h2>
+    </div>
+    <div id="history-container"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div style="color:#fff;font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:0.2rem">Distribuidora El Istmo</div>
+      <div class="tagline">SUMINISTRAMOS SOLUCIONES, IMPULSAMOS TU NEGOCIO</div>
+    </div>
+    <div style="text-align:right">
+      <div>Panamá, República de Panamá</div>
+      <div>© 2025 Distribuidora El Istmo</div>
+    </div>
+  </div>
+</footer>
+
+<script src="Scripts.js"></script>
+</body>
+</html>
